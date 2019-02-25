@@ -1,1 +1,1 @@
-# testing
+# Golang testing utilities
