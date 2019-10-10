@@ -23,6 +23,13 @@ func Nil(t *testing.T, actual interface{}) {
 	}
 }
 
+func NotNil(t *testing.T, actual interface{}) {
+	t.Helper()
+	if actual == nil {
+		t.Fatalf("Expected not nil, was nil")
+	}
+}
+
 func Eq(t *testing.T, description string, actual interface{}, expected interface{}) {
 	t.Helper()
 	actualType := reflect.TypeOf(actual)
