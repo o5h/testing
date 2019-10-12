@@ -16,7 +16,7 @@ func False(t *testing.T, description string, actual interface{}) {
 	Eq(t, description, actual, false)
 }
 
-func Nil(t *testing.T, actual interface{}) {
+func Nil(t *testing.T, description string, actual interface{}) {
 	t.Helper()
 	if actual != nil {
 		t.Fatalf("Expected nil, was %v", actual)
