@@ -19,14 +19,14 @@ func False(t *testing.T, description string, actual interface{}) {
 func Nil(t *testing.T, description string, actual interface{}) {
 	t.Helper()
 	if actual != nil {
-		t.Fatalf("Expected nil, was %v", actual)
+		t.Fatalf("%v. Expected nil, was %v", description, actual)
 	}
 }
 
-func NotNil(t *testing.T, actual interface{}) {
+func NotNil(t *testing.T, description string, actual interface{}) {
 	t.Helper()
 	if actual == nil {
-		t.Fatalf("Expected not nil, was nil")
+		t.Fatalf("%v. Expected not nil, was nil", description)
 	}
 }
 
