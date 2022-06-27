@@ -6,51 +6,51 @@ import (
 	"testing"
 )
 
-func True(t *testing.T, description string, actual interface{}) {
+func True(t *testing.T, actual interface{}) {
 	t.Helper()
-	Eq(t, description, actual, true)
+	Eq(t, actual, true)
 }
 
-func False(t *testing.T, description string, actual interface{}) {
+func False(t *testing.T, actual interface{}) {
 	t.Helper()
-	Eq(t, description, actual, false)
+	Eq(t, actual, false)
 }
 
-func Nil(t *testing.T, description string, actual interface{}) {
+func Nil(t *testing.T, actual interface{}) {
 	t.Helper()
 	if actual != nil {
-		t.Fatalf("%v. Expected nil, was %v", description, actual)
+		t.Fatalf("Expected nil, was %v", actual)
 	}
 }
 
-func NotNil(t *testing.T, description string, actual interface{}) {
+func NotNil(t *testing.T, actual interface{}) {
 	t.Helper()
 	if actual == nil {
-		t.Fatalf("%v. Expected not nil, was nil", description)
+		t.Fatalf("Expected not nil, was nil")
 	}
 }
 
-func Eq(t *testing.T, description string, actual interface{}, expected interface{}) {
+func Eq(t *testing.T, actual interface{}, expected interface{}) {
 	t.Helper()
 	actualType := reflect.TypeOf(actual)
 	expectedType := reflect.TypeOf(expected)
 	if actualType != expectedType {
-		t.Fatalf("%v. Expected =>'%T'<=, was =>'%T'<=", description, expectedType, actualType)
+		t.Fatalf("Expected =>'%T'<=, was =>'%T'<=", expectedType, actualType)
 	}
 	if !reflect.DeepEqual(actual, expected) {
-		t.Fatalf("%v. Expected =>'%v'<=, was =>'%v'<=", description, expected, actual)
+		t.Fatalf("Expected =>'%v'<=, was =>'%v'<=", expected, actual)
 	}
 }
 
-func NotEq(t *testing.T, description string, actual interface{}, expected interface{}) {
+func NotEq(t *testing.T, actual interface{}, expected interface{}) {
 	t.Helper()
 	actualType := reflect.TypeOf(actual)
 	expectedType := reflect.TypeOf(expected)
 	if actualType != expectedType {
-		t.Fatalf("%v. Expected %T, was %T", description, expectedType, actualType)
+		t.Fatalf("Expected %T, was %T", expectedType, actualType)
 	}
 	if reflect.DeepEqual(actual, expected) {
-		t.Fatalf("%v. Expected not %v, was %v", description, expected, actual)
+		t.Fatalf("Expected not %v, was %v", expected, actual)
 	}
 }
 
