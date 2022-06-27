@@ -47,10 +47,10 @@ func NotEq(t *testing.T, actual interface{}, expected interface{}) {
 	actualType := reflect.TypeOf(actual)
 	expectedType := reflect.TypeOf(expected)
 	if actualType != expectedType {
-		t.Fatalf("Expected %T, was %T", expectedType, actualType)
+		t.Fatalf("Expected `%T`, was `%T`", expected, actual)
 	}
 	if reflect.DeepEqual(actual, expected) {
-		t.Fatalf("Expected not %v, was %v", expected, actual)
+		t.Fatalf("Expected not `%v`, was `%v`", expected, actual)
 	}
 }
 
