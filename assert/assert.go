@@ -2,124 +2,90 @@ package assert
 
 import (
 	"math"
-	"reflect"
 	"testing"
 )
 
-func True(t *testing.T, actual interface{}) {
+func True(t *testing.T, actual interface{}, what ...any) {
 	t.Helper()
-	Eq(t, actual, true)
+	Eq(t, actual, true, what...)
 }
 
-func False(t *testing.T, actual interface{}) {
+func False(t *testing.T, actual interface{}, what ...any) {
 	t.Helper()
-	Eq(t, actual, false)
+	Eq(t, actual, false, what...)
 }
 
-func Nil(t *testing.T, actual interface{}) {
+func Nil(t *testing.T, actual interface{}, what ...any) {
 	t.Helper()
 	if actual != nil {
+		logWhat(t, what...)
 		t.Fatalf("Expected nil, was %v", actual)
 	}
 }
 
-func NotNil(t *testing.T, actual interface{}) {
+func NotNil(t *testing.T, actual interface{}, what ...any) {
 	t.Helper()
 	if actual == nil {
+		logWhat(t, what...)
 		t.Fatalf("Expected not nil, was nil")
 	}
 }
 
-func Eq(t *testing.T, actual interface{}, expected interface{}) {
+func EqUint64(t *testing.T, actual uint64, expected uint64) {
 	t.Helper()
-	actualType := reflect.TypeOf(actual)
-	expectedType := reflect.TypeOf(expected)
-	if actualType != expectedType {
-		t.Fatalf("Expected =>'%T'<=, was =>'%T'<=", expectedType, actualType)
-	}
-	if !reflect.DeepEqual(actual, expected) {
+	if actual != expected {
 		t.Fatalf("Expected =>'%v'<=, was =>'%v'<=", expected, actual)
 	}
 }
 
-func NotEq(t *testing.T, actual interface{}, expected interface{}) {
+func Eq[T comparable](t *testing.T, actual T, expected T, what ...any) {
 	t.Helper()
-	actualType := reflect.TypeOf(actual)
-	expectedType := reflect.TypeOf(expected)
-	if actualType != expectedType {
-		t.Fatalf("Expected `%T`, was `%T`", expected, actual)
+	if actual == expected {
+		return
 	}
-	if reflect.DeepEqual(actual, expected) {
-		t.Fatalf("Expected not `%v`, was `%v`", expected, actual)
+	t.Fatalf("Expected =>'%v'<=, was =>'%v'<=", expected, actual)
+
+}
+
+func NotEq[T comparable](t *testing.T, actual T, expected T) {
+	t.Helper()
+	if actual != expected {
+		return
+	}
+	t.Fatalf("Expected not `%v`, was `%v`", expected, actual)
+}
+
+func EqEpsilon[T float32 | float64](t *testing.T, actual T, expected T, epsilon float64) {
+	t.Helper()
+	if math.Abs(float64(actual)-float64(expected)) > epsilon {
+		t.Fatalf("Expected %f, was %f (+-%f)", expected, actual, epsilon)
 	}
 }
 
-func EqEpsilon(t *testing.T, actual interface{}, expected interface{}, epsilon float64) {
+func EqSlice[T comparable](t *testing.T, actual []T, expected []T) {
 	t.Helper()
-	act := asFloat64(t, actual)
-	exp := asFloat64(t, expected)
-	if math.Abs(act-exp) > epsilon {
-		t.Fatalf("Expected %f, was %f (+-%f)", exp, act, epsilon)
+	if len(actual) != len(expected) {
+		t.Fatalf("Slice len expected %v, was %v", len(expected), len(actual))
+	}
+
+	for i, a := range actual {
+		Eq(t, a, expected[i])
 	}
 }
 
-func EqSlice(t *testing.T, actual interface{}, expected interface{}, epsilon float64) {
+func EqSliceEpsilon[T float32 | float64](t *testing.T, actual []T, expected []T, epsilon float64) {
 	t.Helper()
-	var act reflect.Value
-	var exp reflect.Value
-
-	switch reflect.TypeOf(actual).Kind() {
-	case reflect.Slice:
-		act = reflect.ValueOf(actual)
-	default:
-		t.Fatalf("Slice is expected, was %T", actual)
+	if len(actual) != len(expected) {
+		t.Fatalf("Slice len expected %v, was %v", len(expected), len(actual))
 	}
 
-	switch reflect.TypeOf(expected).Kind() {
-	case reflect.Slice:
-		exp = reflect.ValueOf(expected)
-	default:
-		t.Fatalf("Slice is expected, was %T", expected)
-	}
-
-	if exp.Len() != act.Len() {
-		t.Fatalf("Slice len expected %v, was %v", exp.Len(), act.Len())
-	}
-
-	for i := 0; i < exp.Len(); i++ {
-		expValue := exp.Index(i).Interface()
-		actValue := act.Index(i).Interface()
-		EqEpsilon(t, actValue, expValue, epsilon)
+	for i, a := range actual {
+		EqEpsilon(t, a, expected[i], epsilon)
 	}
 }
 
-func asFloat64(t *testing.T, i interface{}) float64 {
-	switch v := i.(type) {
-	case uint:
-		return float64(v)
-	case int:
-		return float64(v)
-	case int8:
-		return float64(v)
-	case uint8:
-		return float64(v)
-	case int16:
-		return float64(v)
-	case uint16:
-		return float64(v)
-	case int32:
-		return float64(v)
-	case uint32:
-		return float64(v)
-	case int64:
-		return float64(v)
-	case uint64:
-		return float64(v)
-	case float32:
-		return float64(v)
-	case float64:
-		return v
+func logWhat(t *testing.T, what ...any) {
+	if len(what) > 0 {
+		t.Log(what...)
 	}
-	t.Fatalf("Unsupported type %T for %v", i, i)
-	return 0
 }
