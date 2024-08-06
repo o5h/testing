@@ -1,3 +1,3 @@
 module github.com/o5h/testing
 
-go 1.21
+go 1.22
